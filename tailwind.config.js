@@ -9,6 +9,7 @@ export default {
         "shades-black": "#121212",
         "bone-white": "#FFF8DC",
         "blood-red": "#880808",
+        "btn-color": "rgb(51, 51, 51)",
       },
       fontFamily: {
         "press-start": "var(--font-press-start)",

@@ -1,28 +1,62 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-    --font-press-start: "Press Start 2P", cursive;
+  --font-press-start: "Press Start 2P", cursive;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+.fade-in {
+  -webkit-animation: fadeIn 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: fadeIn 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @layer base {
-    body {
-        @apply bg-shades-black font-press-start text-bone-white font-medium;
-    }
+  body {
+    @apply bg-black font-press-start text-bone-white font-medium;
+  }
 }
 
 @layer components {
-    .main-container {
-        @apply w-full min-h-svh px-5 flex items-center justify-center;
-    }
+  .main-container {
+    @apply w-full min-h-svh px-5 flex items-center justify-center;
+  }
+}
+
+@layer utilities {
+  .text-welcome {
+    @apply text-blood-red font-extrabold text-2xl max-md:text-xl max-[396px]:text-lg max-md:leading-[3rem] max-[396px]:leading-[2.75rem] max-[524px]:mx-auto max-[524px]:max-w-[275px] max-[524px]:max-w-[260px] tracking-wider text-center;
+  }
+  .text-button {
+    @apply min-w-48 max-md:min-w-40 max-sm:min-w-24 max-[396px]:min-w-28 text-bone-white text-[0.925rem] max-md:text-[0.825rem] max-[480px]:text-[0.725rem] max-[396px]:text-[0.55rem];
+  }
 }
