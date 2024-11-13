@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --font-press-start: "Press Start 2P", cursive;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+@layer base {
+    body {
+        @apply bg-shades-black font-press-start text-bone-white font-medium;
+    }
+}
+
+@layer components {
+    .main-container {
+        @apply w-full min-h-svh px-5 flex items-center justify-center;
+    }
+}
