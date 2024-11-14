@@ -20,6 +20,52 @@
   animation: fadeIn 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
+.game-box {
+  width: 150px;
+  height: 145px;
+  border-right: 5px solid #fff;
+  border-bottom: 5px solid #fff;
+  transition: .2s ease-in-out;
+}
+
+.game-box:nth-child(3),
+.game-box:nth-child(6),
+.game-box:nth-child(9) {
+  border-right: none;
+}
+
+.game-box:nth-child(7),
+.game-box:nth-child(8),
+.game-box:nth-child(9) {
+  border-bottom: none;
+}
+
+.game-box:hover {
+  cursor: context-menu;
+  box-shadow: 5px 6px 10px 3px #fff;
+}
+
+@media screen and (max-width: 640px) {
+  .game-box {
+    width: 130px;
+    height: 130px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .game-box {
+    width: 100px;
+    height: 110px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .game-box {
+    width: 85px;
+    height: 95px;
+  }
+}
+
 @-webkit-keyframes fadeIn {
   0% {
     opacity: 0;
