@@ -50,13 +50,22 @@
   .main-container {
     @apply w-full min-h-svh px-5 flex items-center justify-center;
   }
+
+  .input {
+    @apply w-[365px] max-[480px]:w-[285px] max-[375px]:w-[215px] py-4 px-2 bg-btn-color text-bone-white text-sm max-[480px]:text-xs text-center border-none outline-none;
+  }
 }
 
 @layer utilities {
   .text-welcome {
     @apply text-blood-red font-extrabold text-2xl max-md:text-xl max-[396px]:text-lg max-md:leading-[3rem] max-[396px]:leading-[2.75rem] max-[524px]:mx-auto max-[524px]:max-w-[275px] max-[524px]:max-w-[260px] tracking-wider text-center;
   }
+
   .text-button {
     @apply min-w-48 max-md:min-w-40 max-sm:min-w-24 max-[396px]:min-w-28 text-bone-white text-[0.925rem] max-md:text-[0.825rem] max-[480px]:text-[0.725rem] max-[396px]:text-[0.55rem];
+  }
+
+  .text-level {
+    @apply min-w-24 max-[480px]:min-w-20 max-[375px]:min-w-16 text-bone-white text-[0.85rem] max-[480px]:text-[0.675rem] max-[375px]:text-[0.575rem];
   }
 }
