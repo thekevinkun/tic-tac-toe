@@ -1,6 +1,11 @@
 import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import { Button } from "../components";
+
+import { isGamePlay } from "../redux/actions/playGameActions";
+import { playComputer } from "../redux/actions/gameDataActions";
 
 import { hoverBoxAudio, gameStartAudio, errorAudio } from "../constants/audios";
 
@@ -54,6 +59,7 @@ const OnePlayer = () => {
   const gameStartSoundRef = useRef(null);
   const errorSoundRef = useRef(null);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handlePlaySoundOnHover = () => {
@@ -75,8 +81,17 @@ const OnePlayer = () => {
       return;
     }
 
+    const level =
+      pickLevel === 1 ? "easy" : pickLevel === 2 ? "medium" : "hard";
+
     await gameStartSoundRef.current.play();
-    await handleGameMode().then(() => navigate("/play"));
+
+    await handleGameMode()
+      .then(() => dispatch(isGamePlay()))
+      .then(() =>
+        dispatch(playComputer({ level: level, playerOne: queryName }))
+      )
+      .then(() => navigate("/play"));
   };
 
   return (

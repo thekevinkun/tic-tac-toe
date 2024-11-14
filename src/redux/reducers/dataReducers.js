@@ -1,32 +1,37 @@
-import { COMPUTER, MULTIPLAYER } from "../actions/gameDataActions";
+import { COMPUTER, TWOPLAYER, RESET } from "../actions/gameDataActions";
 
 const initialState = {
-    playerOneName: "",
-    playerTwoName: "",
-    playerOneSymbol: "",
-    playerTwoSymbol: ""
-}
+  level: "",
+  playerOneName: "",
+  playerTwoName: "",
+  playerOneScore: 0,
+  playerTwoScore: 0,
+};
 
 const dataReducers = (state = initialState, action) => {
-    switch(action.type) {
-        case COMPUTER:
-            return {
-                ...state,
-                playerOneName: action.payload.playerOne,
-                playerTwoName: "COMPUTER",
-                playerOneSymbol: action.payload.playerOneSyms,
-                playerTwoSymbol: action.payload.playerOneSyms === 'X' ? 'O' : 'X'
-            }
-        case MULTIPLAYER:
-            return {
-                playerOneName: action.payload.playerOne,
-                playerTwoName: action.payload.playerTwo,
-                playerOneSymbol: action.payload.playerOneSyms,
-                playerTwoSymbol: action.payload.playerTwoSyms
-            }
-        default:
-            return state;
-    }
-}
+  switch (action.type) {
+    case COMPUTER:
+      return {
+        ...state,
+        level: action.payload.level,
+        playerOneName: action.payload.playerOne,
+        playerTwoName: "COMPUTER",
+        playerOneScore: action.payload.playerOneScore || 0,
+        playerTwoScore: action.payload.playerTwoScore || 0,
+      };
+    case TWOPLAYER:
+      return {
+        ...state,
+        playerOneName: action.payload.playerOne,
+        playerTwoName: action.payload.playerTwo,
+        playerOneScore: action.payload.playerOneScore || 0,
+        playerTwoScore: action.payload.playerTwoScore || 0,
+      };
+    case RESET:
+      return initialState;
+    default:
+      return state;
+  }
+};
 
 export default dataReducers;

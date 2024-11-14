@@ -1,16 +1,23 @@
 export const COMPUTER = "COMPUTER";
-export const MULTIPLAYER = "MULTIPLAYER";
+export const TWOPLAYER = "TWOPLAYER";
+export const RESET = "RESET";
 
 export const playComputer = (data) => {
-    return {
-        type: COMPUTER,
-        payload: data
-    }
-}
+  return {
+    type: COMPUTER,
+    payload: data,
+  };
+};
 
-export const playMultiplayer = (data) => {
-    return {
-        type: MULTIPLAYER,
-        payload: data
-    }
-}
+export const playTwoPlayer = (data) => {
+  return {
+    type: TWOPLAYER,
+    payload: data,
+  };
+};
+
+export const resetData = () => {
+  return {
+    type: RESET,
+  };
+};

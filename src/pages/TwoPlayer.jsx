@@ -1,6 +1,10 @@
 import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components";
+
+import { isGamePlay } from "../redux/actions/playGameActions";
+import { playTwoPlayer } from "../redux/actions/gameDataActions";
 
 import { hoverBoxAudio, gameStartAudio, errorAudio } from "../constants/audios";
 
@@ -27,6 +31,7 @@ const TwoPlayer = () => {
   const gameStartSoundRef = useRef(null);
   const errorSoundRef = useRef(null);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handlePlaySoundOnHover = () => {
@@ -45,7 +50,17 @@ const TwoPlayer = () => {
     }
 
     await gameStartSoundRef.current.play();
-    await handleGameMode().then(() => navigate("/play"));
+    await handleGameMode()
+      .then(() => dispatch(isGamePlay()))
+      .then(() =>
+        dispatch(
+          playTwoPlayer({
+            playerOne: queryFirstName,
+            playerTwo: querySecondName,
+          })
+        )
+      )
+      .then(() => navigate("/play"));
   };
 
   return (
@@ -55,7 +70,7 @@ const TwoPlayer = () => {
           id="input-name-1"
           type="text"
           placeholder="Player 1 Name..."
-          className="input !text-xs max-[480px]:!text-[0.7rem] max-[480px]:!text-[0.6rem] transition-opacity duration-1000"
+          className="input !text-xs max-[480px]:!text-[0.7rem] max-[375px]:!text-[0.6rem] transition-opacity duration-1000"
           autoComplete="off"
           onChange={({ target }) => setQueryFirstName(target.value)}
         />
@@ -64,7 +79,7 @@ const TwoPlayer = () => {
           id="input-name-2"
           type="text"
           placeholder="Player 2 Name..."
-          className="input mt-5 !text-xs max-[480px]:!text-[0.7rem] max-[480px]:!text-[0.6rem] transition-opacity duration-1000"
+          className="input mt-5 !text-xs max-[480px]:!text-[0.7rem] max-[375px]:!text-[0.6rem] transition-opacity duration-1000"
           autoComplete="off"
           onChange={({ target }) => setQuerySecondName(target.value)}
         />

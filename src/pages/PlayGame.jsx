@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+
 import { FaX, FaCircle } from "react-icons/fa6";
 
 const SymbolOnBoard = ({ clickedBox }) => {
@@ -41,6 +43,9 @@ const Board = ({ board, clickedBox, onClick }) => {
 };
 
 const GameScore = () => {
+  const { playerOneName, playerTwoName, playerOneScore, playerTwoScore } =
+    useSelector((state) => state.data);
+
   return (
     <div className="flex items-center justify-center gap-5 max-[375px]:gap-3">
       <div className="flex items-center gap-11 max-[480px]:gap-7 max-[375px]:gap-5">
@@ -49,13 +54,13 @@ const GameScore = () => {
             (X)
           </p>
           <p className="max-sm:text-sm max-[480px]:text-xs max-[375px]:text-[0.625rem]">
-            Kevinkun
+            {playerOneName}
           </p>
         </div>
 
         <div>
           <p className="max-sm:text-sm max-[480px]:text-xs max-[375px]:text-[0.625rem]">
-            0
+            {playerOneScore}
           </p>
         </div>
       </div>
@@ -67,7 +72,7 @@ const GameScore = () => {
       <div className="flex items-center gap-11 max-[480px]:gap-7 max-[375px]:gap-5">
         <div>
           <p className="max-sm:text-sm max-[480px]:text-xs max-[375px]:text-[0.625rem]">
-            1
+            {playerTwoScore}
           </p>
         </div>
 
@@ -76,7 +81,7 @@ const GameScore = () => {
             (O)
           </p>
           <p className="max-sm:text-sm max-[480px]:text-xs  max-[375px]:text-[0.625rem]">
-            Computer
+            {playerTwoName}
           </p>
         </div>
       </div>

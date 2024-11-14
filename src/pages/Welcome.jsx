@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "../components";
+
+import { resetData } from "../redux/actions/gameDataActions";
+import { isGameReady, resetGame } from "../redux/actions/playGameActions";
 
 import { hoverBoxAudio, pickPlayerAudio } from "../constants/audios";
 
@@ -63,22 +67,39 @@ const handleGameMode = (gameMode) => {
 const Welcome = () => {
   const hoverBoxSoundRef = useRef(null);
   const pickPlayerSoundRef = useRef(null);
+
+  const { isGameReadyToPlay, isGameToPlay } = useSelector(
+    (state) => state.game
+  );
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleVsComputer = async (e) => {
     pickPlayerSoundRef.current.play();
-    await handleGameMode(e.target.id).then(() => navigate("/one-player"));
+    await handleGameMode(e.target.id)
+      .then(() => dispatch(isGameReady("computer")))
+      .then(() => navigate("/one-player"));
   };
 
   const handleTwoPlayer = async (e) => {
     await pickPlayerSoundRef.current.play();
-    await handleGameMode(e.target.id).then(() => navigate("/two-player"));
+    await handleGameMode(e.target.id)
+      .then(() => dispatch(isGameReady("two Player")))
+      .then(() => navigate("/two-player"));
   };
 
   const handlePlaySoundOnHover = () => {
     hoverBoxSoundRef.current.muted = false;
     hoverBoxSoundRef.current.play();
   };
+
+  useEffect(() => {
+    if (isGameReadyToPlay || isGameToPlay) {
+      dispatch(resetData());
+      dispatch(resetGame());
+    }
+  }, []);
 
   return (
     <div>
