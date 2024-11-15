@@ -85,7 +85,7 @@ const Welcome = () => {
   const handleTwoPlayer = async (e) => {
     await pickPlayerSoundRef.current.play();
     await handleGameMode(e.target.id)
-      .then(() => dispatch(isGameReady("two Player")))
+      .then(() => dispatch(isGameReady("two player")))
       .then(() => navigate("/two-player"));
   };
 

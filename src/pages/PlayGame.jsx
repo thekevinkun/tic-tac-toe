@@ -1,117 +1,142 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { FaX, FaCircle } from "react-icons/fa6";
+import { GameScore, SquareBox } from "../components";
 
-const SymbolOnBoard = ({ clickedBox }) => {
-  return (
-    <div className="symbol-on-board">
-      {clickedBox[i] === 1 && playerOneSymbol === "X" ? (
-        <FaX />
-      ) : clickedBox[i] === 1 && playerOneSymbol === "O" ? (
-        <FaCircle />
-      ) : clickedBox[i] === 2 && playerTwoSymbol === "X" ? (
-        <FaX />
-      ) : clickedBox[i] === 2 && playerTwoSymbol === "O" ? (
-        <FaCircle />
-      ) : (
-        ""
-      )}
-    </div>
-  );
-};
+import { updateScore } from "../redux/actions/gameDataActions";
 
-const Board = ({ board, clickedBox, onClick }) => {
+import { checkWinOfGame } from "../constants/helper";
+
+const Board = ({ board, clickedBox, playerNextTurn, onGame }) => {
+  // STATE: As a state for each box to know which icon to show
+
+  const handleClickBoard = async (row, col, box) => {
+    const copyBoard = board.slice();
+    const copyClickedBox = clickedBox.slice();
+
+    if (copyBoard[row][col] === "") {
+      if (playerNextTurn === 1) {
+        copyClickedBox[box] = 1;
+        copyBoard[row][col] = "X";
+      } else if (playerNextTurn === 2) {
+        copyClickedBox[box] = 2;
+        copyBoard[row][col] = "O";
+      }
+
+      onGame(copyBoard, copyClickedBox);
+    }
+  };
+
   let i = 0;
-  return board.map((row, rowIndex) => {
-    return row.map((col, colIndex) => {
-      i++;
-      return (
-        <button
-          key={"box-" + i}
-          id={i}
-          row={rowIndex}
-          col={colIndex}
-          className="game-box"
-          onClick={onClick}
-        >
-          ""
-        </button>
-      );
-    });
-  });
-};
-
-const GameScore = () => {
-  const { playerOneName, playerTwoName, playerOneScore, playerTwoScore } =
-    useSelector((state) => state.data);
 
   return (
-    <div className="flex items-center justify-center gap-5 max-[375px]:gap-3">
-      <div className="flex items-center gap-11 max-[480px]:gap-7 max-[375px]:gap-5">
-        <div className="flex flex-col items-center justify-center gap-1">
-          <p className="text-sm max-sm:text-xs max-[480px]:text-[0.6rem] max-[375px]:text-[0.575rem]">
-            (X)
-          </p>
-          <p className="max-sm:text-sm max-[480px]:text-xs max-[375px]:text-[0.625rem]">
-            {playerOneName}
-          </p>
-        </div>
-
-        <div>
-          <p className="max-sm:text-sm max-[480px]:text-xs max-[375px]:text-[0.625rem]">
-            {playerOneScore}
-          </p>
-        </div>
-      </div>
-
-      <p className="max-sm:text-sm max-[480px]:text-xs max-[375px]:text-[0.625rem]">
-        vs
-      </p>
-
-      <div className="flex items-center gap-11 max-[480px]:gap-7 max-[375px]:gap-5">
-        <div>
-          <p className="max-sm:text-sm max-[480px]:text-xs max-[375px]:text-[0.625rem]">
-            {playerTwoScore}
-          </p>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-1">
-          <p className="text-sm max-sm:text-xs max-[480px]:text-[0.6rem] max-[375px]:text-[0.575rem]">
-            (O)
-          </p>
-          <p className="max-sm:text-sm max-[480px]:text-xs  max-[375px]:text-[0.625rem]">
-            {playerTwoName}
-          </p>
-        </div>
-      </div>
+    <div className="grid grid-cols-3">
+      {board.map((row, rowIndex) => {
+        return row.map((col, colIndex) => {
+          i++;
+          return (
+            <SquareBox
+              key={"box-" + i}
+              id={"box-" + i}
+              row={rowIndex}
+              col={colIndex}
+              box={i - 1}
+              className="game-box"
+              value={clickedBox[i - 1]}
+              handleClickBoard={handleClickBoard}
+            />
+          );
+        });
+      })}
     </div>
   );
 };
 
 const PlayGame = () => {
+  const dispatch = useDispatch();
+
+  // Get Player Information from redux store
+  const { mode } = useSelector((state) => state.game);
+  const { playerOneName, playerTwoName, playerOneScore, playerTwoScore } =
+    useSelector((state) => state.data);
+
   // STATE: create 2d array
   const [board, setBoard] = useState(
     Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => ""))
   );
 
-  // STATE: As a state for each box to know which icon to show
   const [clickedBox, setClickedBox] = useState(Array(9).fill(0));
+  const [playerNextTurn, setPlayerNextTurn] = useState(1);
 
-  const handleGame = (e) => {};
+  const announceEndGame = (winner) => {
+    if (winner === 1) {
+      alert("Player 1 Won!");
+      return;
+    }
+
+    if (mode === "computer" && winner === 2) {
+      alert("Computer Won!");
+      return;
+    }
+
+    if (mode === "two player" && winner === 2) {
+      alert("Player 2 Won!");
+      return;
+    }
+  };
+
+  const updateGameScore = (winner) => {
+    if (winner === 1) {
+      dispatch(
+        updateScore({
+          playerOneScore: playerOneScore + 1,
+          playerTwoScore: playerTwoScore,
+        })
+      );
+    } else if (winner === 2) {
+      dispatch(
+        updateScore({
+          playerOneScore: playerOneScore,
+          playerTwoScore: playerTwoScore + 1,
+        })
+      );
+    }
+  };
+
+  const handleGame = (copyBoard, copyClickedBox) => {
+    setClickedBox(copyClickedBox);
+    setBoard(copyBoard);
+
+    const isGetWinner = checkWinOfGame(copyBoard);
+
+    if (isGetWinner === 0 || isGetWinner === 1 || isGetWinner === 2) {
+      updateGameScore(isGetWinner);
+
+      setTimeout(() => {
+        announceEndGame(isGetWinner);
+      }, 1500);
+    } else if (isGetWinner === -1) {
+      setPlayerNextTurn(playerNextTurn === 1 ? 2 : 1);
+    }
+  };
 
   return (
     <div className="fade-in mt-8 max-sm:mt-0 flex flex-col items-center justify-center">
-      <div className="grid grid-cols-3">
-        <Board
-          board={board}
-          clickedBox={clickedBox}
-          onClick={(e) => handleGame(e)}
-        />
-      </div>
+      <Board
+        board={board}
+        clickedBox={clickedBox}
+        playerNextTurn={playerNextTurn}
+        onGame={handleGame}
+      />
 
       <div className="mt-14">
-        <GameScore />
+        <GameScore
+          playerOneName={playerOneName}
+          playerTwoName={playerTwoName}
+          playerOneScore={playerOneScore}
+          playerTwoScore={playerTwoScore}
+          playerNextTurn={playerNextTurn}
+        />
       </div>
     </div>
   );

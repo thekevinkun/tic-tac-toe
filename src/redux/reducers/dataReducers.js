@@ -1,4 +1,9 @@
-import { COMPUTER, TWOPLAYER, RESET } from "../actions/gameDataActions";
+import {
+  COMPUTER,
+  TWOPLAYER,
+  UPDATE_SCORE,
+  RESET,
+} from "../actions/gameDataActions";
 
 const initialState = {
   level: "",
@@ -16,16 +21,18 @@ const dataReducers = (state = initialState, action) => {
         level: action.payload.level,
         playerOneName: action.payload.playerOne,
         playerTwoName: "COMPUTER",
-        playerOneScore: action.payload.playerOneScore || 0,
-        playerTwoScore: action.payload.playerTwoScore || 0,
       };
     case TWOPLAYER:
       return {
         ...state,
         playerOneName: action.payload.playerOne,
         playerTwoName: action.payload.playerTwo,
-        playerOneScore: action.payload.playerOneScore || 0,
-        playerTwoScore: action.payload.playerTwoScore || 0,
+      };
+    case UPDATE_SCORE:
+      return {
+        ...state,
+        playerOneScore: action.payload.playerOneScore,
+        playerTwoScore: action.payload.playerTwoScore,
       };
     case RESET:
       return initialState;
