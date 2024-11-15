@@ -1,26 +1,45 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { GameScore, SquareBox } from "../components";
+import { Button, GameScore, SquareBox, AnnounceGame } from "../components";
 
-import { updateScore } from "../redux/actions/gameDataActions";
+import { resetGame } from "../redux/actions/playGameActions";
+import { resetData, updateScore } from "../redux/actions/gameDataActions";
 
 import { checkWinOfGame } from "../constants/helper";
 
-const Board = ({ board, clickedBox, playerNextTurn, onGame }) => {
-  // STATE: As a state for each box to know which icon to show
+import {
+  hoverBoxAudio,
+  pickPlayerAudio,
+  clickGameBoardAudio,
+  finishGameAudio,
+  gameStartAudio,
+  endGameAudio,
+} from "../constants/audios";
+
+const Board = ({
+  board,
+  clickedBox,
+  playerNextTurn,
+  playerOneSymbol,
+  playerTwoSymbol,
+  onGame,
+}) => {
+  const clickBoardAudioRef = useRef(null);
 
   const handleClickBoard = async (row, col, box) => {
+    clickBoardAudioRef.current.play();
+
     const copyBoard = board.slice();
     const copyClickedBox = clickedBox.slice();
 
     if (copyBoard[row][col] === "") {
       if (playerNextTurn === 1) {
         copyClickedBox[box] = 1;
-        copyBoard[row][col] = "X";
+        copyBoard[row][col] = playerOneSymbol;
       } else if (playerNextTurn === 2) {
         copyClickedBox[box] = 2;
-        copyBoard[row][col] = "O";
+        copyBoard[row][col] = playerTwoSymbol;
       }
 
       onGame(copyBoard, copyClickedBox);
@@ -43,20 +62,31 @@ const Board = ({ board, clickedBox, playerNextTurn, onGame }) => {
               box={i - 1}
               className="game-box"
               value={clickedBox[i - 1]}
+              playerOneSymbol={playerOneSymbol}
+              playerTwoSymbol={playerTwoSymbol}
               handleClickBoard={handleClickBoard}
             />
           );
         });
       })}
+
+      <audio ref={clickBoardAudioRef} src={clickGameBoardAudio} />
     </div>
   );
 };
 
 const PlayGame = () => {
+  const [isGamePlay, setIsGamePlay] = useState(true);
+
+  const hoverBoxSoundRef = useRef(null);
+  const pickPlayerSoundRef = useRef(null);
+  const finishGameSoundRef = useRef(null);
+  const gameStartSoundRef = useRef(null);
+  const endGameSoundRef = useRef(null);
+
   const dispatch = useDispatch();
 
   // Get Player Information from redux store
-  const { mode } = useSelector((state) => state.game);
   const { playerOneName, playerTwoName, playerOneScore, playerTwoScore } =
     useSelector((state) => state.data);
 
@@ -66,40 +96,112 @@ const PlayGame = () => {
   );
 
   const [clickedBox, setClickedBox] = useState(Array(9).fill(0));
+
   const [playerNextTurn, setPlayerNextTurn] = useState(1);
+  const [playerOneSymbol, setPlayerOneSymbol] = useState("X");
+  const [playerTwoSymbol, setPlayerTwoSymbol] = useState("O");
 
-  const announceEndGame = (winner) => {
-    if (winner === 1) {
-      alert("Player 1 Won!");
-      return;
+  const [isAnnounceGame, setIsAnnounceGame] = useState(-1);
+
+  const handlePlaySoundOnHover = () => {
+    hoverBoxSoundRef.current.play();
+  };
+
+  const switchPlayerSymbol = () => {
+    let tempSymbol = playerOneSymbol;
+    setPlayerOneSymbol(playerTwoSymbol);
+    setPlayerTwoSymbol(tempSymbol);
+  };
+
+  const emptyBoard = () => {
+    let copy_board = [...board];
+    for (let i = 0; i < copy_board.length; i++) {
+      for (let j = 0; j < copy_board[i].length; j++) {
+        copy_board[i][j] = "";
+        setBoard(copy_board);
+      }
     }
 
-    if (mode === "computer" && winner === 2) {
-      alert("Computer Won!");
-      return;
+    let copy_clicked_box = [...clickedBox];
+    for (let i = 0; i < copy_clicked_box.length; i++) {
+      copy_clicked_box[i] = 0;
+      setClickedBox(copy_clicked_box);
+    }
+  };
+
+  const handlePlayAgain = () => {
+    pickPlayerSoundRef.current.play();
+
+    dispatch(resetData());
+    dispatch(resetGame());
+  };
+
+  const handleEndGame = () => {
+    // Reset game
+    endGameSoundRef.current.play();
+
+    setIsGamePlay(false);
+
+    setIsAnnounceGame(-1);
+  };
+
+  const handleContinueGame = () => {
+    // Empty board state array, for evaluation
+    emptyBoard();
+
+    /* 
+        This for handling which player should start first 
+        After switch symbol, player who play X is always play first, whoever the winner
+        IF player one is X, it will switch the symbol to player two, means set the setPlayerNextTurn to player two(2), so p2 will play first
+        BUT IF player two is X, it will switch the symbol to player one, means set the setPlayerNextTurn to player one(1), so p1 will play first
+    */
+    if (playerOneSymbol === "X") {
+      setPlayerNextTurn(2);
+    } else if (playerTwoSymbol === "X") {
+      setPlayerNextTurn(1);
     }
 
-    if (mode === "two player" && winner === 2) {
-      alert("Player 2 Won!");
-      return;
-    }
+    // Switch player symbol for each new game
+    switchPlayerSymbol();
+
+    // Play start game sound
+    gameStartSoundRef.current.play();
+
+    // Reset game
+    setIsAnnounceGame(-1);
   };
 
   const updateGameScore = (winner) => {
     if (winner === 1) {
-      dispatch(
-        updateScore({
-          playerOneScore: playerOneScore + 1,
-          playerTwoScore: playerTwoScore,
-        })
-      );
+      if (playerOneSymbol === "X")
+        dispatch(
+          updateScore({
+            playerOneScore: playerOneScore + 1,
+            playerTwoScore: playerTwoScore,
+          })
+        );
+      else
+        dispatch(
+          updateScore({
+            playerOneScore: playerOneScore,
+            playerTwoScore: playerTwoScore + 1,
+          })
+        );
     } else if (winner === 2) {
-      dispatch(
-        updateScore({
-          playerOneScore: playerOneScore,
-          playerTwoScore: playerTwoScore + 1,
-        })
-      );
+      if (playerTwoSymbol === "O")
+        dispatch(
+          updateScore({
+            playerOneScore: playerOneScore,
+            playerTwoScore: playerTwoScore + 1,
+          })
+        );
+      else
+        dispatch(
+          updateScore({
+            playerOneScore: playerOneScore + 1,
+            playerTwoScore: playerTwoScore,
+          })
+        );
     }
   };
 
@@ -113,31 +215,76 @@ const PlayGame = () => {
       updateGameScore(isGetWinner);
 
       setTimeout(() => {
-        announceEndGame(isGetWinner);
-      }, 1500);
+        finishGameSoundRef.current.play();
+        setIsAnnounceGame(isGetWinner);
+      }, 500);
     } else if (isGetWinner === -1) {
       setPlayerNextTurn(playerNextTurn === 1 ? 2 : 1);
     }
   };
 
   return (
-    <div className="fade-in mt-8 max-sm:mt-0 flex flex-col items-center justify-center">
-      <Board
-        board={board}
-        clickedBox={clickedBox}
-        playerNextTurn={playerNextTurn}
-        onGame={handleGame}
-      />
+    <div>
+      <div
+        className={`${!isGamePlay && "pointer-events-none"}
+        fade-in flex flex-col items-center justify-center`}
+      >
+        <div className="mt-8 max-sm:mt-0">
+          <Board
+            board={board}
+            clickedBox={clickedBox}
+            playerNextTurn={playerNextTurn}
+            playerOneSymbol={playerOneSymbol}
+            playerTwoSymbol={playerTwoSymbol}
+            onGame={handleGame}
+          />
+        </div>
 
-      <div className="mt-14">
-        <GameScore
-          playerOneName={playerOneName}
-          playerTwoName={playerTwoName}
-          playerOneScore={playerOneScore}
-          playerTwoScore={playerTwoScore}
-          playerNextTurn={playerNextTurn}
-        />
+        <div className="mt-14">
+          <GameScore
+            isGamePlay={isGamePlay}
+            playerOneName={playerOneName}
+            playerTwoName={playerTwoName}
+            playerOneSymbol={playerOneSymbol}
+            playerTwoSymbol={playerTwoSymbol}
+            playerOneScore={playerOneScore}
+            playerTwoScore={playerTwoScore}
+            playerNextTurn={playerNextTurn}
+          />
+        </div>
+
+        {isAnnounceGame > -1 && (
+          <AnnounceGame
+            winner={isAnnounceGame}
+            playerOneName={playerOneName}
+            playerTwoName={playerTwoName}
+            playerOneSymbol={playerOneSymbol}
+            playerTwoSymbol={playerTwoSymbol}
+            onContinue={handleContinueGame}
+            onEnd={handleEndGame}
+          />
+        )}
       </div>
+
+      {!isGamePlay && (
+        <div className="absolute bottom-5 right-5">
+          <Button
+            id="restart"
+            className="py-3 px-5 bg-blood-red/80 hover:bg-blood-red/100 !rounded-md transition-[background-color] duration-300"
+            subClassName="text-[0.675rem]"
+            onClick={handlePlayAgain}
+            onHover={handlePlaySoundOnHover}
+          >
+            Play again
+          </Button>
+        </div>
+      )}
+
+      <audio ref={hoverBoxSoundRef} src={hoverBoxAudio} />
+      <audio ref={pickPlayerSoundRef} src={pickPlayerAudio} />
+      <audio ref={finishGameSoundRef} src={finishGameAudio} />
+      <audio ref={gameStartSoundRef} src={gameStartAudio} />
+      <audio ref={endGameSoundRef} src={endGameAudio} />
     </div>
   );
 };

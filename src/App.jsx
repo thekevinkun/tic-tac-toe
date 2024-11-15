@@ -38,7 +38,10 @@ function App() {
             )
           }
         />
-        <Route path="/play" element={<PlayGame />} />
+        <Route
+          path="/play"
+          element={isGameToPlay ? <PlayGame /> : <Navigate to="/" />}
+        />
 
         <Route path="/404" element={<ErrorBoundary />} />
         <Route path="*" element={<Navigate to="/404" />} />

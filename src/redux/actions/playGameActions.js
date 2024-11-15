@@ -1,6 +1,6 @@
 export const READY_TO_PLAY = "READY_TO_PLAY";
 export const PLAY_GAME = "PLAY_GAME";
-export const RESET = "RESET";
+export const RESET_GAME = "RESET_GAME";
 
 export const isGameReady = (data) => {
   return {
@@ -17,6 +17,6 @@ export const isGamePlay = () => {
 
 export const resetGame = () => {
   return {
-    type: RESET,
+    type: RESET_GAME,
   };
 };

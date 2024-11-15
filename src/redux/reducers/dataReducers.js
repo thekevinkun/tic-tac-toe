@@ -2,7 +2,7 @@ import {
   COMPUTER,
   TWOPLAYER,
   UPDATE_SCORE,
-  RESET,
+  RESET_DATA,
 } from "../actions/gameDataActions";
 
 const initialState = {
@@ -34,7 +34,7 @@ const dataReducers = (state = initialState, action) => {
         playerOneScore: action.payload.playerOneScore,
         playerTwoScore: action.payload.playerTwoScore,
       };
-    case RESET:
+    case RESET_DATA:
       return initialState;
     default:
       return state;

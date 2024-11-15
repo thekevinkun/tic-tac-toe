@@ -1,7 +1,7 @@
 export const COMPUTER = "COMPUTER";
 export const TWOPLAYER = "TWOPLAYER";
 export const UPDATE_SCORE = "UPDATE_SCORE";
-export const RESET = "RESET";
+export const RESET_DATA = "RESET_DATA";
 
 export const playComputer = (data) => {
   return {
@@ -26,6 +26,6 @@ export const updateScore = (data) => {
 
 export const resetData = () => {
   return {
-    type: RESET,
+    type: RESET_DATA,
   };
 };

@@ -1,4 +1,8 @@
-import { READY_TO_PLAY, PLAY_GAME, RESET } from "../actions/playGameActions";
+import {
+  READY_TO_PLAY,
+  PLAY_GAME,
+  RESET_GAME,
+} from "../actions/playGameActions";
 
 const initialState = {
   isGameReadyToPlay: false,
@@ -20,7 +24,7 @@ const gameReducers = (state = initialState, action) => {
         isGameToPlay: true,
         isGameReadyToPlay: false,
       };
-    case RESET:
+    case RESET_GAME:
       return initialState;
     default:
       return state;
