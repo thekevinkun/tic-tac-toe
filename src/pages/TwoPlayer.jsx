@@ -1,12 +1,17 @@
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components";
+import { Button, NotificationGame } from "../components";
 
 import { isGamePlay } from "../redux/actions/playGameActions";
 import { playTwoPlayer } from "../redux/actions/gameDataActions";
 
-import { hoverBoxAudio, gameStartAudio, errorAudio } from "../constants/audios";
+import {
+  hoverBoxAudio,
+  pickPlayerAudio,
+  gameStartAudio,
+  errorAudio,
+} from "../constants/audios";
 
 const handleGameMode = () => {
   let inputNameOne = document.getElementById("input-name-1");
@@ -28,8 +33,12 @@ const TwoPlayer = () => {
   const [querySecondName, setQuerySecondName] = useState("");
 
   const hoverBoxSoundRef = useRef(null);
+  const pickPlayerSoundRef = useRef(null);
   const gameStartSoundRef = useRef(null);
   const errorSoundRef = useRef(null);
+
+  const [stopPlay, setStopPlay] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,17 +47,23 @@ const TwoPlayer = () => {
     hoverBoxSoundRef.current.play();
   };
 
+  const handleCloseNotification = () => {
+    pickPlayerSoundRef.current.play();
+    setShowNotification(false);
+  };
+
   const handleStartGame = async () => {
     if (!queryFirstName) {
       errorSoundRef.current.play();
-      alert("Please enter Player One Name!");
+      setShowNotification(true);
       return;
     } else if (!querySecondName) {
       errorSoundRef.current.play();
-      alert("Please enter Player Two Name!");
+      setShowNotification(true);
       return;
     }
 
+    await setStopPlay(true);
     await gameStartSoundRef.current.play();
     await handleGameMode()
       .then(() => dispatch(isGamePlay()))
@@ -64,13 +79,13 @@ const TwoPlayer = () => {
   };
 
   return (
-    <div className="fade-in">
+    <div className="fade-in flex items-center justify-center">
       <div className="flex flex-col items-center">
         <input
           id="input-name-1"
           type="text"
           placeholder="Player 1 Name..."
-          className="input !text-xs max-[480px]:!text-[0.7rem] max-[375px]:!text-[0.6rem] transition-opacity duration-1000"
+          className="input max-[375px]:!text-[0.6rem] transition-opacity duration-1000"
           autoComplete="off"
           onChange={({ target }) => setQueryFirstName(target.value)}
         />
@@ -79,16 +94,17 @@ const TwoPlayer = () => {
           id="input-name-2"
           type="text"
           placeholder="Player 2 Name..."
-          className="input mt-5 !text-xs max-[480px]:!text-[0.7rem] max-[375px]:!text-[0.6rem] transition-opacity duration-1000"
+          className="input mt-5 max-[375px]:!text-[0.6rem] transition-opacity duration-1000"
           autoComplete="off"
           onChange={({ target }) => setQuerySecondName(target.value)}
         />
 
         <Button
           id="start-game"
-          className="w-fit mt-11 max-[375px]:mt-8 py-4 px-4 !rounded-lg bg-btn-color/75 hover:bg-btn-color/100 hover:scale-110 
-            transition-[background-color,transform,opacity] duration-1000"
-          subClassName="text-bone-white text-[0.675rem] max-[375px]:text-[0.6rem] pointer-events-none"
+          className={`${stopPlay && "pointer-events-none"}
+              w-fit mt-11 max-[480px]:mt-10 max-[375px]:mt-8 py-5 px-4 max-[480px]:py-4 max-[375px]:py-3 max-[375px]:px-3 !rounded-md 
+              bg-blood-red/75 hover:bg-blood-red/100 hover:scale-110 transition-[background-color,transform,opacity] duration-1000`}
+          subClassName="text-xs max-[480px]:text-[0.65rem] max-[375px]:text-[0.575rem] pointer-events-none"
           onClick={() => handleStartGame()}
           onHover={handlePlaySoundOnHover}
         >
@@ -96,7 +112,16 @@ const TwoPlayer = () => {
         </Button>
       </div>
 
+      {showNotification && (
+        <NotificationGame
+          queryFirstName={queryFirstName}
+          querySecondName={querySecondName}
+          onClick={handleCloseNotification}
+        />
+      )}
+
       <audio ref={hoverBoxSoundRef} src={hoverBoxAudio} />
+      <audio ref={pickPlayerSoundRef} src={pickPlayerAudio} />
       <audio ref={gameStartSoundRef} src={gameStartAudio} />
       <audio ref={errorSoundRef} src={errorAudio} />
     </div>

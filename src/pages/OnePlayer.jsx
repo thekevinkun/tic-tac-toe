@@ -2,12 +2,17 @@ import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { Button } from "../components";
+import { Button, NotificationGame } from "../components";
 
 import { isGamePlay } from "../redux/actions/playGameActions";
 import { playComputer } from "../redux/actions/gameDataActions";
 
-import { hoverBoxAudio, gameStartAudio, errorAudio } from "../constants/audios";
+import {
+  hoverBoxAudio,
+  pickPlayerAudio,
+  gameStartAudio,
+  errorAudio,
+} from "../constants/audios";
 
 const createLevel = (n, pickLevel, handlePickLevel, handlePlaySoundOnHover) => {
   const rows = [];
@@ -22,8 +27,8 @@ const createLevel = (n, pickLevel, handlePickLevel, handlePlaySoundOnHover) => {
             ? "scale-110 border-4 border-blood-red pointer-events-none"
             : ""
         }
-            py-10 px-4 max-[480px]:px-3 max-[375px]:py-8 max-[375px]:px-2 bg-btn-color/75 
-            hover:bg-btn-color/100 hover:scale-110 transition-[background-color,transform,opacity] duration-700`}
+            py-10 px-4 max-[480px]:px-3 max-[375px]:py-8 max-[375px]:px-2 bg-matte-black/75 
+            hover:bg-matte-black/100 hover:scale-110 transition-[background-color,transform,opacity] duration-700`}
         subClassName="text-level pointer-events-none"
         onClick={() => handlePickLevel(i + 1)}
         onHover={handlePlaySoundOnHover}
@@ -56,14 +61,23 @@ const OnePlayer = () => {
   const [queryName, setQueryName] = useState("");
 
   const hoverBoxSoundRef = useRef(null);
+  const pickPlayerSoundRef = useRef(null);
   const gameStartSoundRef = useRef(null);
   const errorSoundRef = useRef(null);
+
+  const [stopPlay, setStopPlay] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handlePlaySoundOnHover = () => {
     hoverBoxSoundRef.current.play();
+  };
+
+  const handleCloseNotification = () => {
+    pickPlayerSoundRef.current.play();
+    setShowNotification(false);
   };
 
   const handlePickLevel = (lvl) => {
@@ -73,17 +87,18 @@ const OnePlayer = () => {
   const handleStartGame = async () => {
     if (!pickLevel) {
       errorSoundRef.current.play();
-      alert("Please pick your level!");
+      setShowNotification(true);
       return;
     } else if (!queryName) {
       errorSoundRef.current.play();
-      alert("Please enter your name!");
+      setShowNotification(true);
       return;
     }
 
     const level =
       pickLevel === 1 ? "easy" : pickLevel === 2 ? "medium" : "hard";
 
+    await setStopPlay(true);
     await gameStartSoundRef.current.play();
 
     await handleGameMode()
@@ -95,11 +110,12 @@ const OnePlayer = () => {
   };
 
   return (
-    <div className="fade-in">
+    <div className="fade-in flex items-center justify-center">
       <div className="flex flex-col items-center">
         <div
           id="level-game"
-          className="flex items-center justify-center gap-6 max-[480px]:gap-3 max-[375px]:gap-2 transition-opacity duration-1000"
+          className={`${stopPlay && "pointer-events-none"}
+            flex items-center justify-center gap-6 max-[480px]:gap-3 max-[375px]:gap-2 transition-opacity duration-1000`}
         >
           {createLevel(3, pickLevel, handlePickLevel, handlePlaySoundOnHover)}
         </div>
@@ -115,9 +131,10 @@ const OnePlayer = () => {
 
         <Button
           id="start-game"
-          className="w-fit mt-10 max-[375px]:mt-8 py-4 px-4 !rounded-lg bg-btn-color/75 hover:bg-btn-color/100 hover:scale-110 
-            transition-[background-color,transform,opacity] duration-1000"
-          subClassName="text-bone-white text-[0.675rem] max-[375px]:text-[0.6rem] pointer-events-none"
+          className={`${stopPlay && "pointer-events-none"}
+            w-fit mt-10 max-[480px]:mt-8 max-[375px]:mt-7 py-4 px-4 max-[375px]:px-3 !rounded-md 
+            bg-blood-red/75 hover:bg-blood-red/100 hover:scale-110 transition-[background-color,transform,opacity] duration-1000`}
+          subClassName="text-bone-white text-[0.675rem] max-[480px]:text-[0.625rem] max-[375px]:text-[0.55rem] pointer-events-none"
           onClick={() => handleStartGame()}
           onHover={handlePlaySoundOnHover}
         >
@@ -125,7 +142,16 @@ const OnePlayer = () => {
         </Button>
       </div>
 
+      {showNotification && (
+        <NotificationGame
+          level={pickLevel}
+          queryFirstName={queryName}
+          onClick={handleCloseNotification}
+        />
+      )}
+
       <audio ref={hoverBoxSoundRef} src={hoverBoxAudio} />
+      <audio ref={pickPlayerSoundRef} src={pickPlayerAudio} />
       <audio ref={gameStartSoundRef} src={gameStartAudio} />
       <audio ref={errorSoundRef} src={errorAudio} />
     </div>

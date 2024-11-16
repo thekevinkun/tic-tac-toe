@@ -25,7 +25,7 @@
   height: 145px;
   border-right: 5px solid #fff;
   border-bottom: 5px solid #fff;
-  transition: .2s ease-in-out;
+  transition: 0.2s ease-in-out;
 }
 
 .game-box:nth-child(3),
@@ -98,7 +98,7 @@
   }
 
   .input {
-    @apply w-[365px] max-[480px]:w-[285px] max-[375px]:w-[215px] py-4 px-2 bg-btn-color text-bone-white text-sm max-[480px]:text-xs text-center border-none outline-none;
+    @apply w-[365px] max-[480px]:w-[285px] max-[375px]:w-[215px] py-4 px-2 bg-matte-black text-bone-white text-sm max-[480px]:text-xs text-center border-none outline-none;
   }
 }
 
@@ -108,7 +108,7 @@
   }
 
   .text-button {
-    @apply min-w-48 max-md:min-w-40 max-sm:min-w-24 max-[396px]:min-w-28 text-bone-white text-[0.925rem] max-md:text-[0.825rem] max-[480px]:text-[0.725rem] max-[396px]:text-[0.55rem];
+    @apply min-w-48 max-md:min-w-40 max-[480px]:min-w-36 max-[396px]:min-w-28 text-bone-white text-[0.925rem] max-md:text-[0.825rem] max-[480px]:text-[0.725rem] max-[396px]:text-[0.55rem];
   }
 
   .text-level {

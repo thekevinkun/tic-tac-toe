@@ -6,10 +6,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        "shades-black": "#121212",
+        "matte-black": "#28282B",
         "bone-white": "#FFF8DC",
         "blood-red": "#880808",
-        "btn-color": "rgb(51, 51, 51)",
+        "neon-silver": "#c9c9c9",
+        "secondary-black": "#121212",
       },
       fontFamily: {
         "press-start": "var(--font-press-start)",

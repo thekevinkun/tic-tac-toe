@@ -41,7 +41,6 @@ const fadeOut = (el1, el2) => {
 };
 
 const handleGameMode = (gameMode) => {
-  console.log(gameMode);
   let gameModeElementToHide;
   let welcomeText = document.getElementById("welcome");
   let pickedGameMode = document.getElementById(gameMode);
@@ -68,6 +67,8 @@ const Welcome = () => {
   const hoverBoxSoundRef = useRef(null);
   const pickPlayerSoundRef = useRef(null);
 
+  const [stopPlay, setStopPlay] = useState(false);
+
   const { isGameReadyToPlay, isGameToPlay } = useSelector(
     (state) => state.game
   );
@@ -76,13 +77,15 @@ const Welcome = () => {
   const navigate = useNavigate();
 
   const handleVsComputer = async (e) => {
-    pickPlayerSoundRef.current.play();
+    await setStopPlay(true);
+    await pickPlayerSoundRef.current.play();
     await handleGameMode(e.target.id)
       .then(() => dispatch(isGameReady("computer")))
       .then(() => navigate("/one-player"));
   };
 
   const handleTwoPlayer = async (e) => {
+    await setStopPlay(true);
     await pickPlayerSoundRef.current.play();
     await handleGameMode(e.target.id)
       .then(() => dispatch(isGameReady("two player")))
@@ -107,11 +110,12 @@ const Welcome = () => {
         Let's play Tic Tac Toe!
       </h1>
 
-      <div className="fade-in mt-20 max-md:mt-16 flex items-center justify-center gap-10 max-sm:gap-5 max-[396px]:gap-2">
+      <div className="fade-in mt-24 max-md:mt-20 max-[524px]:mt-14 max-[396px]:mt-10 flex items-center justify-center gap-10 max-sm:gap-5 max-[396px]:gap-2">
         <Button
           id="computer"
-          className="py-7 px-5 max-[480px]:py-6 max-[480px]:px-3 max-[396px]:py-5 max-[396px]:px-2 bg-btn-color/75 
-              hover:bg-btn-color/100 hover:scale-110 transition-[background-color,transform,opacity] duration-700"
+          className={`${stopPlay && "pointer-events-none"}
+            py-8 px-5 max-[480px]:py-6 max-[480px]:px-3 max-[396px]:py-4 max-[396px]:px-2 
+          bg-matte-black/75 hover:bg-matte-black/100 hover:scale-110 transition-[background-color,transform,opacity] duration-700`}
           subClassName="flex flex-col gap-10 items-center justify-center pointer-events-none"
           onClick={(e) => handleVsComputer(e)}
           onHover={handlePlaySoundOnHover}
@@ -122,8 +126,9 @@ const Welcome = () => {
 
         <Button
           id="two-player"
-          className="py-7 px-5 max-[480px]:py-6 max-[480px]:px-3 max-[396px]:py-5 max-[396px]:px-2 bg-btn-color/75 
-              hover:bg-btn-color/100 hover:scale-110 transition-[background-color,transform,opacity] duration-700"
+          className={`${stopPlay && "pointer-events-none"}
+            py-8 px-5 max-[480px]:py-6 max-[480px]:px-3 max-[396px]:py-4 max-[396px]:px-2 
+          bg-matte-black/75 hover:bg-matte-black/100 hover:scale-110 transition-[background-color,transform,opacity] duration-700`}
           subClassName="flex flex-col gap-10 items-center justify-center pointer-events-none"
           onClick={(e) => handleTwoPlayer(e)}
           onHover={handlePlaySoundOnHover}
