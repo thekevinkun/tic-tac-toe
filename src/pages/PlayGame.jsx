@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button, GameScore, SquareBox, AnnounceGame } from "../components";
@@ -6,7 +6,12 @@ import { Button, GameScore, SquareBox, AnnounceGame } from "../components";
 import { resetGame } from "../redux/actions/playGameActions";
 import { resetData, updateScore } from "../redux/actions/gameDataActions";
 
-import { checkWinOfGame } from "../constants/helper";
+import {
+  checkWinOfGame,
+  playComputerLevelEasy,
+  playComputerLevelMedium,
+  playComputerLevelHard,
+} from "../constants/helper";
 
 import {
   hoverBoxAudio,
@@ -20,18 +25,62 @@ import {
 const Board = ({
   board,
   clickedBox,
+  gameMode,
+  level,
   playerNextTurn,
   playerOneSymbol,
   playerTwoSymbol,
   onGame,
 }) => {
   const clickBoardAudioRef = useRef(null);
+  let copyBoard = null;
+  let copyClickedBox = null;
+
+  const computerMove = () => {
+    clickBoardAudioRef.current.play();
+
+    copyBoard = board.slice();
+    copyClickedBox = clickedBox.slice();
+
+    if (level === "easy") {
+      const { row, col } = playComputerLevelEasy(copyBoard);
+
+      copyBoard[row][col] = playerTwoSymbol;
+
+      const box = col + row * 3;
+      copyClickedBox[box] = 2;
+    } else if (level === "medium") {
+      const { row, col } = playComputerLevelMedium(
+        copyBoard,
+        playerOneSymbol,
+        playerTwoSymbol
+      );
+
+      copyBoard[row][col] = playerTwoSymbol;
+
+      const box = col + row * 3;
+      copyClickedBox[box] = 2;
+    } else if (level === "hard") {
+      const { row, col } = playComputerLevelHard(
+        copyBoard,
+        playerOneSymbol,
+        playerTwoSymbol
+      );
+
+      copyBoard[row][col] = playerTwoSymbol;
+
+      const box = col + row * 3;
+      copyClickedBox[box] = 2;
+    }
+
+    onGame(copyBoard, copyClickedBox);
+  };
 
   const handleClickBoard = async (row, col, box) => {
     clickBoardAudioRef.current.play();
 
-    const copyBoard = board.slice();
-    const copyClickedBox = clickedBox.slice();
+    copyBoard = board.slice();
+    copyClickedBox = clickedBox.slice();
 
     if (copyBoard[row][col] === "") {
       if (playerNextTurn === 1) {
@@ -45,6 +94,16 @@ const Board = ({
       onGame(copyBoard, copyClickedBox);
     }
   };
+
+  useEffect(() => {
+    if (gameMode === "computer") {
+      if (playerNextTurn === 2) {
+        setTimeout(() => {
+          computerMove();
+        }, 700);
+      }
+    }
+  }, [playerNextTurn]);
 
   let i = 0;
 
@@ -86,9 +145,16 @@ const PlayGame = () => {
 
   const dispatch = useDispatch();
 
+  const mode = useSelector((state) => state.game.mode);
+
   // Get Player Information from redux store
-  const { playerOneName, playerTwoName, playerOneScore, playerTwoScore } =
-    useSelector((state) => state.data);
+  const {
+    level,
+    playerOneName,
+    playerTwoName,
+    playerOneScore,
+    playerTwoScore,
+  } = useSelector((state) => state.data);
 
   // STATE: create 2d array
   const [board, setBoard] = useState(
@@ -233,6 +299,8 @@ const PlayGame = () => {
           <Board
             board={board}
             clickedBox={clickedBox}
+            gameMode={mode}
+            level={level}
             playerNextTurn={playerNextTurn}
             playerOneSymbol={playerOneSymbol}
             playerTwoSymbol={playerTwoSymbol}
