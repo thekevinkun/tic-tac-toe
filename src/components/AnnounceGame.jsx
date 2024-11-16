@@ -49,7 +49,7 @@ const AnnounceGame = ({
   };
 
   return (
-    <div className="absolute z-50">
+    <div className="pop-out absolute z-50">
       <div className="bg-neon-silver rounded-lg">
         {!continueGame ? (
           <div

@@ -150,6 +150,10 @@ const OnePlayer = () => {
         />
       )}
 
+      {showNotification && (
+        <div className="w-full h-full absolute top-0 left-0 z-40 bg-matte-black/35"></div>
+      )}
+
       <audio ref={hoverBoxSoundRef} src={hoverBoxAudio} />
       <audio ref={pickPlayerSoundRef} src={pickPlayerAudio} />
       <audio ref={gameStartSoundRef} src={gameStartAudio} />

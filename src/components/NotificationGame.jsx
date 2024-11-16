@@ -36,7 +36,7 @@ const NotificationGame = ({
   }
 
   return (
-    <div className="absolute z-50">
+    <div className="pop-out absolute z-50">
       <div className="bg-neon-silver rounded-lg">
         <div
           className="py-10 px-10 max-sm:px-7 max-[480px]:py-7 max-[480px]:px-4 max-[375px]:py-5 max-[375px]:px-3  

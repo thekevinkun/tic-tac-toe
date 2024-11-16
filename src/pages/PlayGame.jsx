@@ -37,8 +37,6 @@ const Board = ({
   let copyClickedBox = null;
 
   const computerMove = () => {
-    clickBoardAudioRef.current.play();
-
     copyBoard = board.slice();
     copyClickedBox = clickedBox.slice();
 
@@ -73,6 +71,7 @@ const Board = ({
       copyClickedBox[box] = 2;
     }
 
+    clickBoardAudioRef.current.play();
     onGame(copyBoard, copyClickedBox);
   };
 
@@ -119,7 +118,11 @@ const Board = ({
               row={rowIndex}
               col={colIndex}
               box={i - 1}
-              className="game-box"
+              className={`game-box ${
+                gameMode === "computer" &&
+                playerNextTurn === 2 &&
+                "pointer-events-none"
+              }`}
               value={clickedBox[i - 1]}
               playerOneSymbol={playerOneSymbol}
               playerTwoSymbol={playerTwoSymbol}
@@ -290,10 +293,10 @@ const PlayGame = () => {
   };
 
   return (
-    <div>
+    <div className="fade-in flex flex-col items-center justify-center">
       <div
         className={`${!isGamePlay && "pointer-events-none"}
-        fade-in flex flex-col items-center justify-center`}
+          flex flex-col items-center justify-center`}
       >
         <div className="mt-8 max-sm:mt-0">
           <Board
@@ -320,19 +323,23 @@ const PlayGame = () => {
             playerNextTurn={playerNextTurn}
           />
         </div>
-
-        {isAnnounceGame > -1 && (
-          <AnnounceGame
-            winner={isAnnounceGame}
-            playerOneName={playerOneName}
-            playerTwoName={playerTwoName}
-            playerOneSymbol={playerOneSymbol}
-            playerTwoSymbol={playerTwoSymbol}
-            onContinue={handleContinueGame}
-            onEnd={handleEndGame}
-          />
-        )}
       </div>
+
+      {isAnnounceGame > -1 && (
+        <AnnounceGame
+          winner={isAnnounceGame}
+          playerOneName={playerOneName}
+          playerTwoName={playerTwoName}
+          playerOneSymbol={playerOneSymbol}
+          playerTwoSymbol={playerTwoSymbol}
+          onContinue={handleContinueGame}
+          onEnd={handleEndGame}
+        />
+      )}
+
+      {isAnnounceGame > -1 && (
+        <div className="w-full h-full absolute top-0 left-0 z-40 bg-matte-black/35"></div>
+      )}
 
       {!isGamePlay && (
         <div className="absolute bottom-5 right-5">
