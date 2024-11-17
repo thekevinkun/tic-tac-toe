@@ -29,6 +29,8 @@ const handleGameMode = () => {
 };
 
 const TwoPlayer = () => {
+  document.title = "Tic Tac Toe | Two Player";
+
   const [queryFirstName, setQueryFirstName] = useState("");
   const [querySecondName, setQuerySecondName] = useState("");
 
@@ -75,7 +77,7 @@ const TwoPlayer = () => {
           })
         )
       )
-      .then(() => navigate("/play"));
+      .then(() => navigate("play"));
   };
 
   return (

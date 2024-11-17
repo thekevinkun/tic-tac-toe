@@ -57,6 +57,8 @@ const handleGameMode = () => {
 };
 
 const OnePlayer = () => {
+  document.title = "Tic Tac Toe | vs Computer";
+
   const [pickLevel, setPickLevel] = useState(null);
   const [queryName, setQueryName] = useState("");
 
@@ -81,6 +83,7 @@ const OnePlayer = () => {
   };
 
   const handlePickLevel = (lvl) => {
+    pickPlayerSoundRef.current.play();
     setPickLevel(lvl);
   };
 
@@ -106,7 +109,7 @@ const OnePlayer = () => {
       .then(() =>
         dispatch(playComputer({ level: level, playerOne: queryName }))
       )
-      .then(() => navigate("/play"));
+      .then(() => navigate("play"));
   };
 
   return (

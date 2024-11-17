@@ -138,6 +138,8 @@ const Board = ({
 };
 
 const PlayGame = () => {
+  document.title = "Tic Tac Toe | Play Game";
+
   const [isGamePlay, setIsGamePlay] = useState(true);
 
   const hoverBoxSoundRef = useRef(null);
@@ -201,8 +203,10 @@ const PlayGame = () => {
   const handlePlayAgain = () => {
     pickPlayerSoundRef.current.play();
 
-    dispatch(resetData());
-    dispatch(resetGame());
+    setTimeout(() => {
+      dispatch(resetData());
+      dispatch(resetGame());
+    }, 300);
   };
 
   const handleEndGame = () => {

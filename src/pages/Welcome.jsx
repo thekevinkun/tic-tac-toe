@@ -64,6 +64,8 @@ const handleGameMode = (gameMode) => {
 };
 
 const Welcome = () => {
+  document.title = "Tic Tac Toe";
+
   const hoverBoxSoundRef = useRef(null);
   const pickPlayerSoundRef = useRef(null);
 
@@ -81,7 +83,7 @@ const Welcome = () => {
     await pickPlayerSoundRef.current.play();
     await handleGameMode(e.target.id)
       .then(() => dispatch(isGameReady("computer")))
-      .then(() => navigate("/vs-computer"));
+      .then(() => navigate("vs-computer"));
   };
 
   const handleTwoPlayer = async (e) => {
@@ -89,7 +91,7 @@ const Welcome = () => {
     await pickPlayerSoundRef.current.play();
     await handleGameMode(e.target.id)
       .then(() => dispatch(isGameReady("two player")))
-      .then(() => navigate("/two-player"));
+      .then(() => navigate("two-player"));
   };
 
   const handlePlaySoundOnHover = () => {

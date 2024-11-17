@@ -12,7 +12,10 @@ import "./index.css";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-      <Router basename="/tic-tac-toe">
+      <Router
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        basename="/tic-tac-toe"
+      >
         <App />
       </Router>
     </Provider>
