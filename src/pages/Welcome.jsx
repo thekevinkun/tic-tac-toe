@@ -81,7 +81,7 @@ const Welcome = () => {
     await pickPlayerSoundRef.current.play();
     await handleGameMode(e.target.id)
       .then(() => dispatch(isGameReady("computer")))
-      .then(() => navigate("/one-player"));
+      .then(() => navigate("/vs-computer"));
   };
 
   const handleTwoPlayer = async (e) => {
@@ -93,7 +93,6 @@ const Welcome = () => {
   };
 
   const handlePlaySoundOnHover = () => {
-    hoverBoxSoundRef.current.muted = false;
     hoverBoxSoundRef.current.play();
   };
 
@@ -138,8 +137,8 @@ const Welcome = () => {
         </Button>
       </div>
 
-      <audio ref={hoverBoxSoundRef} src={hoverBoxAudio} autoPlay muted />
-      <audio ref={pickPlayerSoundRef} src={pickPlayerAudio} autoPlay />
+      <audio ref={hoverBoxSoundRef} src={hoverBoxAudio} />
+      <audio ref={pickPlayerSoundRef} src={pickPlayerAudio} />
     </div>
   );
 };

@@ -119,29 +119,45 @@ const playComputerLevelMedium = (
   playerOneSymbol,
   playerTwoSymbol
 ) => {
+  let status = Math.floor(Math.random() * 2 + 1);
+
   let bestRow = 0;
   let bestCol = 0;
-  let score = 0;
-  let bestScore = -Infinity;
 
-  for (let i = 0; i < copyBoard.length; i++) {
-    for (let j = 0; j < copyBoard[i].length; j++) {
-      if (copyBoard[i][j] === "") {
-        copyBoard[i][j] = playerTwoSymbol;
-        score = preMinimax(
-          playerOneSymbol,
-          playerTwoSymbol,
-          copyBoard,
-          -1,
-          false
-        );
+  if (status === 2) {
+    let isStillCalculate = true;
 
-        copyBoard[i][j] = "";
+    do {
+      bestRow = Math.floor(Math.random() * 3);
+      bestCol = Math.floor(Math.random() * 3);
 
-        if (score > bestScore) {
-          bestScore = score;
-          bestRow = i;
-          bestCol = j;
+      if (copyBoard[bestRow][bestCol] === "") {
+        isStillCalculate = false;
+      }
+    } while (isStillCalculate);
+  } else if (status === 1) {
+    let score = 0;
+    let bestScore = -Infinity;
+
+    for (let i = 0; i < copyBoard.length; i++) {
+      for (let j = 0; j < copyBoard[i].length; j++) {
+        if (copyBoard[i][j] === "") {
+          copyBoard[i][j] = playerTwoSymbol;
+          score = preMinimax(
+            playerOneSymbol,
+            playerTwoSymbol,
+            copyBoard,
+            0,
+            false
+          );
+
+          copyBoard[i][j] = "";
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestRow = i;
+            bestCol = j;
+          }
         }
       }
     }

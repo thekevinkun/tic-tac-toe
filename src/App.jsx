@@ -19,7 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route
-          path="/one-player"
+          path="/vs-computer"
           element={
             isGameReadyToPlay && mode === "computer" ? (
               <OnePlayer />

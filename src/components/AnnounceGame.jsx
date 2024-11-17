@@ -62,7 +62,7 @@ const AnnounceGame = ({
                 <span className="text-blood-red"> ({whichSymbol}) </span>Win!
               </h2>
             ) : (
-              <h2>TIE!</h2>
+              <h2 className="text-secondary-black">TIE!</h2>
             )}
 
             <p className="text-secondary-black mt-9 max-[480px]:mt-7 text-sm max-sm:text-xs max-[480px]:text-[0.625rem] max-[375px]:text-[0.55rem]">
