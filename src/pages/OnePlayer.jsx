@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -109,7 +109,7 @@ const OnePlayer = () => {
       .then(() =>
         dispatch(playComputer({ level: level, playerOne: queryName }))
       )
-      .then(() => navigate("play"));
+      .then(() => navigate("/vs-computer/play"));
   };
 
   return (

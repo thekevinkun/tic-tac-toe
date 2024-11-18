@@ -14,7 +14,7 @@ createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <Router
         future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-        basename="/tic-tac-toe"
+        basename="/tic-tac-toe/"
       >
         <App />
       </Router>

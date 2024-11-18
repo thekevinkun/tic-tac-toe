@@ -19,7 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route
-          path="vs-computer"
+          path="/vs-computer"
           element={
             isGameReadyToPlay && mode === "computer" ? (
               <OnePlayer />
@@ -30,12 +30,12 @@ function App() {
         />
 
         <Route
-          path="vs-computer/play"
+          path="/vs-computer/play"
           element={isGameToPlay ? <PlayGame /> : <Navigate to="/" />}
         />
 
         <Route
-          path="two-player"
+          path="/two-player"
           element={
             isGameReadyToPlay && mode === "two player" ? (
               <TwoPlayer />
@@ -46,12 +46,11 @@ function App() {
         />
 
         <Route
-          path="two-player/play"
+          path="/two-player/play"
           element={isGameToPlay ? <PlayGame /> : <Navigate to="/" />}
         />
 
-        <Route path="/404" element={<ErrorBoundary />} />
-        <Route path="*" element={<Navigate to="/404" />} />
+        <Route path="*" element={<ErrorBoundary />} />
       </Routes>
     </main>
   );

@@ -349,8 +349,9 @@ const PlayGame = () => {
         <div className="absolute bottom-5 right-5">
           <Button
             id="restart"
-            className="py-3 px-5 bg-blood-red/80 hover:bg-blood-red/100 !rounded-md transition-[background-color] duration-300"
-            subClassName="text-[0.675rem]"
+            className="py-3 px-5 max-[850px]:px-3
+              bg-blood-red/80 hover:bg-blood-red/100 !rounded-md transition-[background-color] duration-300"
+            subClassName="text-[0.675rem] max-[850px]:text-[0.56rem]"
             onClick={handlePlayAgain}
             onHover={handlePlaySoundOnHover}
           >
